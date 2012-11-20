@@ -1,2 +1,4 @@
-SUBDIRS = src
-dist_NOINST = LICENSE
+SUBDIRS = src tests
+
+TESTS = tests/dirutils_test
+data_NOINST = LICENSE testdata
