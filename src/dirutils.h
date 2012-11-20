@@ -17,8 +17,8 @@
  */
 
 
-#ifndef __VOLTAIRE_MAKEDIR_H
-#define __VOLTAIRE_MAKEDIR_H
+#ifndef __DIRUTILS_MAKEDIR_H
+#define __DIRUTILS_MAKEDIR_H
 
 
 #include <sys/queue.h>
