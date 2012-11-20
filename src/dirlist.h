@@ -17,26 +17,25 @@
  */
 
 
-#ifndef __DIRUTILS_DIRUTILS_H
-#define __DIRUTILS_DIRUTILS_H
+#ifndef __DIRUTILS_DIRLIST_H
+#define __DIRUTILS_DIRLIST_H
 
 
 #include <sys/queue.h>
 #include <stdio.h>
 
-enum E_EXISTS_STATUS {
-        EXISTS_ERROR,
-        EXISTS_NOENT,
-        EXISTS_NOPERM,
-        EXISTS_DIR,
-        EXISTS_FILE
+
+struct dirlst {
+        char                    path[FILENAME_MAX + 1];
+        TAILQ_ENTRY(dirlst)     dirs;
 };
-typedef enum E_EXISTS_STATUS EXISTS_STATUS;
+TAILQ_HEAD(tq_dirlst, dirlst);
 
 
-int             makedirs(const char *, size_t);
-int             rmdirs(const char *, size_t);
-EXISTS_STATUS   path_exists(const char *, size_t);
+struct tq_dirlst        *dirlst_create(const char *, size_t);
+int                      dirlst_push(struct tq_dirlst *, const char *, size_t);
+struct dirlst           *dirlst_pop(struct tq_dirlst *);
+int                      dirlst_destroy(struct tq_dirlst **);
 
 
 #endif
