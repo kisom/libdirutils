@@ -1,0 +1,29 @@
+*.o
+*.a
+*.core
+
+# C autoconf crap
+autom4te.cache
+*.in
+config.*
+compile
+*.m4
+configure
+depcomp
+*.info
+mdate-sh
+stamp-*
+texinfo.tex
+version.texi
+install-sh
+missing
+Makefile
+.deps
+
+# unit testing products
+*_test
+*.trs
+test-driver
+
+# *.log is output from make check
+*.log
