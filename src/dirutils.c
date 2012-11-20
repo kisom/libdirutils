@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "makedir.h"
+#include "dirutils.h"
 
 
 struct dirlst {
