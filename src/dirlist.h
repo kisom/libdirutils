@@ -36,6 +36,9 @@ struct tq_dirlst        *dirlst_create(const char *, size_t);
 int                      dirlst_push(struct tq_dirlst *, const char *, size_t);
 struct dirlst           *dirlst_pop(struct tq_dirlst *);
 int                      dirlst_destroy(struct tq_dirlst **);
+/*
+void                     dirlst_dump(struct tq_dirlst *);
+*/
 
 
 #endif

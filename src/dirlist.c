@@ -34,14 +34,23 @@ struct tq_dirlst
 *dirlst_create(const char *init_path, size_t init_path_sz)
 {
         struct tq_dirlst        *path_lst;
+        struct dirlst           *elm;
 
         if (init_path_sz > FILENAME_MAX)
                 return NULL;
         path_lst = calloc(1, sizeof(struct tq_dirlst));
         if (NULL == path_lst)
                 return path_lst;
+        elm = calloc(1, sizeof(struct dirlst));
+        if (NULL == elm) {
+                free(path_lst);
+                return NULL;
+        }
+        memcpy(elm->path, init_path, init_path_sz);
 
         TAILQ_INIT(path_lst);
+        TAILQ_INSERT_HEAD(path_lst, elm, dirs);
+
         return path_lst;
 }
 
@@ -97,4 +106,18 @@ dirlst_destroy(struct tq_dirlst **lstp)
         return EXIT_SUCCESS;
 }
 
+/*
+void
+dirlst_dump(struct tq_dirlst *lst)
+{
+        struct dirlst   *elm;
+        int              n_elms;
 
+        n_elms = 0;
+        TAILQ_FOREACH(elm, lst, dirs) {
+                printf("\t[*] element -> %s\n", elm->path);
+                n_elms++;
+        }
+        printf("[+] %d elements\n", n_elms);
+}
+*/

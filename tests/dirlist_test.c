@@ -18,40 +18,53 @@
 
 
 #include <sys/types.h>
+#include <sys/queue.h>
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 #include <err.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sysexits.h>
 
-#include <dirutils.h>
+#include <dirlist.h>
 
-/*
- * test the use of the exists function
- */
+
 void
-test_exists(void)
+test_dirlst_create(void)
 {
-        char            testdir[] = "testdata/testdir";
-        char            testfil[] = "testdata/testfile";
-        char            testnot[] = "testdata/nosuchfile";
-        size_t          testdir_len, testfil_len, testnot_len;
-        EXISTS_STATUS   ftype;
+        struct tq_dirlst        *lst;
 
-        testdir_len = strlen(testdir);
-        testfil_len = strlen(testfil);
-        testnot_len = strlen(testnot);
+        lst = dirlst_create((const char *)"foo", 3);
+        CU_ASSERT(lst != NULL);
+        CU_ASSERT(EXIT_SUCCESS == dirlst_destroy(&lst));
+}
 
-        ftype = path_exists(testdir, testdir_len);
-        CU_ASSERT(EXISTS_DIR == ftype);
+void
+test_dirlst_one_push(void)
+{
+        struct tq_dirlst        *lst;
+        struct dirlst           *elm;
+        int                      n_elms, ret;
 
-        ftype = path_exists(testfil, testfil_len);
-        CU_ASSERT(EXISTS_FILE == ftype);
+        lst = dirlst_create((const char *)"foo", 3);
+        ret = dirlst_push(lst, (const char *)"bar", 3);
+        CU_ASSERT(EXIT_SUCCESS == ret);
+        n_elms = 0;
+        TAILQ_FOREACH(elm, lst, dirs)
+            n_elms++;
 
-        ftype = path_exists(testnot, testnot_len);
-        CU_ASSERT(EXISTS_NOENT == ftype);
+        CU_ASSERT(2 == n_elms);
+
+        elm = dirlst_pop(lst);
+        CU_ASSERT(0 == strncmp(elm->path, "bar", 3));
+        free(elm);
+
+        n_elms = 0;
+        TAILQ_FOREACH(elm, lst, dirs)
+            n_elms++;
+
+        CU_ASSERT(1 == n_elms);
+        CU_ASSERT(EXIT_SUCCESS == dirlst_destroy(&lst));
 }
 
 
@@ -104,7 +117,11 @@ main(void)
         if (NULL == tsuite)
                 fireball();
 
-        if (NULL == CU_add_test(tsuite, "path_exists", test_exists))
+        if (NULL == CU_add_test(tsuite, "dirlst create", test_dirlst_create))
+                fireball();
+
+        if (NULL == CU_add_test(tsuite, "dirlst push/pop",
+            test_dirlst_one_push))
                 fireball();
 
         CU_basic_set_mode(CU_BRM_VERBOSE);
@@ -114,4 +131,14 @@ main(void)
 
         CU_cleanup_registry();
         return fails;
+}
+
+
+/*
+ * This is an empty test provided for reference.
+ */
+void
+empty_test()
+{
+        CU_ASSERT(1 == 0);
 }
