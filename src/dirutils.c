@@ -145,16 +145,37 @@ _parent_exists(const char *path)
 int
 _rmdirs(const char *path)
 {
+        char             child[FILENAME_MAX + 1];
         struct dirent   *dp;
         DIR             *dirp;
         int              fail;
 
         if (NULL == (dirp = opendir(path)))
                 return EXIT_FAILURE;
-
+        while (NULL != (dp = readdir(dirp))) {
+                if (0 == strncmp("..", dp->d_name, 3))
+                        continue;
+                if (0 == strncmp(".", dp->d_name, 2))
+                        continue;
+                snprintf(child, FILENAME_MAX, "%s/%s", path, dp->d_name);
+                if (DT_DIR == dp->d_type) {
+                        fail = _rmdirs(child);
+                        if (EXIT_FAILURE == fail)
+                                break;
+                } else {
+                        fail = unlink(child);
+                        if (-1 == fail) {
+                                fail = EXIT_FAILURE;
+                                break;
+                        }
+                }
+        }
         if (-1 == closedir(dirp))
                 return EXIT_FAILURE;
-        if (-1 == rmdir(path))
+        if (EXIT_FAILURE == fail)
                 return EXIT_FAILURE;
-        return EXIT_SUCCESS;
+        else if (-1 == rmdir(path))
+                return EXIT_FAILURE;
+        else
+                return EXIT_SUCCESS;
 }
