@@ -20,6 +20,7 @@
 #include <sys/queue.h>
 #include <sys/stat.h>
 
+#include <dirent.h>
 #include <err.h>
 #include <errno.h>
 #include <libgen.h>
@@ -32,7 +33,7 @@
 
 
 static int      _parent_exists(const char *);
-static int      _rmdirs(const char *, const char *);
+static int      _rmdirs(const char *);
 
 /*
  * Determines whether a directory exists.
@@ -110,7 +111,7 @@ makedirs(const char *path)
 int
 rmdirs(const char *path)
 {
-        return EXIT_FAILURE;
+        return _rmdirs(path);
 }
 
 
@@ -135,4 +136,25 @@ _parent_exists(const char *path)
                 return 0;
         else
                 return 1;
+}
+
+
+/*
+ * remove a directory, all files in it, and all subdirectories.
+ */
+int
+_rmdirs(const char *path)
+{
+        struct dirent   *dp;
+        DIR             *dirp;
+        int              fail;
+
+        if (NULL == (dirp = opendir(path)))
+                return EXIT_FAILURE;
+
+        if (-1 == closedir(dirp))
+                return EXIT_FAILURE;
+        if (-1 == rmdir(path))
+                return EXIT_FAILURE;
+        return EXIT_SUCCESS;
 }
