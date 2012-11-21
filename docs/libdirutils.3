@@ -4,3 +4,54 @@
 .Sh NAME
 .Nm libdirutils
 .Nd Python-esque file utility functions for C
+.Sh SYNOPSIS
+.In dirutils.h
+.Ft int
+.Fo makedirs
+.Fa "const char *path"
+.Fa "size_t path_len"
+.Fc
+.Ft EXISTS_STATUS
+.Fo path_exists
+.Fa "const char *path"
+.Fa "size_t path_len"
+.Fc
+.Ft int
+.Fo rmdirs
+.Fa "const char *path"
+.Fa "size_t path_len"
+.Fc
+.Sh DESCRIPTION
+.Nm
+provides a number of convenience functions for working with files and
+directories; as the name implies, it is aimed primarily at directories.
+.Nm makedirs
+provides functionality similar to
+.Ic mkdir -p ,
+creating all the parent directories required. They are created with the
+caller's umask applied to the mode 0777.
+.Nm path_exists
+returns an EXISTS_STATUS value (described below) indicated the status
+of the file.
+.Nm rmdirs
+provides functionality similar to
+.Ic rm -r .
+.Sh RETURN VALUES
+.Nm makedirs
+and
+.Nm rmdirs
+return EXIT_SUCCESS on success and EXIT_FAILURE on failure.
+.Sh ERRORS
+The most common error will be a permissions error; it may be prudent to
+compare the value of
+.Nm errno
+before and after calling the function.
+.Sh HISTORY
+.Nm
+was inspired by similar functions in the Python and Go programming languages.
+The author found himself in need of such functions in several projects,
+and decided to write a utility library to handle functions.
+.Sh AUTHORS
+.Nm
+was written by
+.An Kyle Isom Aq Mt kyle@tyrfingr.is .
