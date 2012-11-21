@@ -4,7 +4,7 @@
 # and performs everything necessary to run the unit tests.
 
 echo "[+] performing autobuild" ;          \
-        scripts/clean.sh                   \
+        scripts/clean.sh                && \
         scripts/prebuild.sh             && \
         scripts/regen.sh                && \
         make clean                      && \

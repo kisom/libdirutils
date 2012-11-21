@@ -1,4 +1,4 @@
-AM_CFLAGS = -Werror -g -O0 -I/usr/local/include
+AM_CFLAGS = -Werror -g -O0 -I/usr/local/include -static
 
 lib_LIBRARIES = libdirutils.a
 include_HEADERS = dirutils.h
