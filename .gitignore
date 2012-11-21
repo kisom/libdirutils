@@ -34,5 +34,8 @@ test-driver
 
 # texinfo is generated from a script, so it may be written in LaTeX
 # and I don't have to write texinfo crap or fill my head with its
-# nonsense and lies.
+# nonsense and lies. There are, however, a few texinfo templates used
+# in this process of black magic.
 *.texi
+!docs/cc.texi
+!docs/header.texi

@@ -1,3 +1,11 @@
 #!/bin/sh
 
-pandoc -f latex -t texinfo -o libdirutils.texi libdirutils.tex
+DOCNAME="libdirutils"
+
+if [ -e ${DOCNAME}.texi ]; then
+        rm -f ${DOCNAME}.texi
+fi
+
+pandoc -f latex -o ${DOCNAME}_body.texi ${DOCNAME}.tex
+cat header.texi ${DOCNAME}_body.texi > ${DOCNAME}.texi
+rm ${DOCNAME}_body.texi
