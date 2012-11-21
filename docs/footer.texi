@@ -1,13 +1,3 @@
 
 
-@node Manual Copyright
-@appendix Manual Copyright
-
-@include cc.texi
-
-@node Index
-@unnumbered Index
-
-@printindex cp
-
 @bye
