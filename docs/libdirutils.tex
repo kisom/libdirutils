@@ -1,8 +1,88 @@
 \documentclass[10pt,letterpaper]{article}
-\title{libdirutils: simple Python-esque file utilities for C}\author{Kyle ~Isom\\kyle@tyrfingr.is}
+\title{libdirutils: convenience file functions for C}\author{Kyle ~Isom\\kyle@tyrfingr.is}
 
 \begin{document}
 \maketitle
 \section*{Introduction}
+\verb|libdirutils| is a utility library inspired by similar functionality
+in the Go and Python programming languages; it provides functions similar
+to \verb|rm -r| and \verb|mkdir -p|, as well as a convenience function to
+combine the functionality of \verb|access(2)| and \verb|stat(2)|.
 
+\section*{Functions Provided}
+\subsection*{makedirs}
+\begin{verbatim}
+int
+makedirs(const char *path, size_t path_len);
+\end{verbatim}
+\verb|makedirs| creates a path and all required parent directories. The mode
+created is the process's \verb|umask(2)| value applied to \verb|0777|.
+
+\subsection*{rmdirs}
+\begin{verbatim}
+int
+rmdirs(const char *path, size_t path_len);
+\end{verbatim}
+\verb|rmdirs| removes a path and all subdirectories and files.
+
+\subsection*{path\_exists}
+\begin{verbatim}
+EXISTS_STATUS
+path_exists(const char *path, size_t path_len);
+\end{verbatim}
+\verb|path_exists| combines the functionality of \verb|access(2)| and
+\verb|stat(2)|. It checks whether the process has access to the file
+and indicates whether it is a regular file, a directory, or if an
+error occurs. The return type is of the enumeration \verb|EXISTS_STATUS|,
+which is one of
+\\
+\begin{itemize}
+  \item \verb|EXISTS_ERROR|: there was an error looking up the file;
+  \item \verb|EXISTS_NOENT|: the file does not exist;
+  \item \verb|EXISTS_NOPERM|: the process does not have the appropriate
+  permissions to access the file.
+  \item \verb|EXISTS_DIR|: the file is a direcotry; and
+  \item \verb|EXISTS_FILE|: the file is a regular file.
+\end{itemize}
+
+\section*{Getting the Source}
+\subsection*{Dependencies}
+If you will be running the unit tests, \verb|CUnit|\footnote{http://cunit.sourceforge.net/}
+is required. If you will be rebuilding the autotools build infrastructure,
+you will need automake 1.11 and autoconf $\geq$ 2.59.
+\subsection*{Development Repository}
+The source code repository is available on Github\footnote{https://github.com/kisom/libdirutils}.
+The code there is in the original autotools source; the \verb|autobuild.sh|
+script is provided to run through a complete build, including running through
+the provided unit tests:
+
+\begin{verbatim}
+$ git clone https://github.com/kisom/libdirutils.git dirutils
+$ cd dirutils
+$ ./autobuild.sh
+\end{verbatim}
+
+Several utility scripts are provided in the \verb|scripts| subdirectory;
+the \verb|autobuild.sh| script calls these. Of note, the \verb|prebuild.sh|
+script, which will set the necessary autotools environment variables and call
+\verb|autoreconf|.
+\subsection*{Release Tarballs}
+Release tarballs will be made available via the Github repository's
+downloads\footnote{https://github.com/kisom/libdirutils/downloads} section.
+\section*{License}
+\begin{verbatim}
+Copyright (c) 2012 Kyle Isom <kyle@tyrfingr.is>
+
+Permission to use, copy, modify, and distribute this software for any
+purpose with or without fee is hereby granted, provided that the above 
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
+\end{verbatim}
 \end{document}
