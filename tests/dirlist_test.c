@@ -29,6 +29,31 @@
 #include <dirlist.h>
 
 
+/*
+ * helper that, given a list and the expected key, determines whether
+ * the the popped path matches. Return values use if semantics: success
+ * is 1, failure is 0. It is up to the caller to ensure that keylen is
+ * in the acceptable range (FILENAME_MAX) for tests that are to be
+ * successful.
+ */
+int
+test_pop_helper(struct tq_dirlst *lst, const char *key, size_t keylen)
+{
+        struct dirlst   *elm;
+        int              match;
+
+        if (keylen > FILENAME_MAX)
+                return 0;
+
+        elm = dirlst_pop(lst);
+        if (NULL == elm)
+                return 0;
+        match = strncmp(elm->path, key, keylen);
+        free(elm);
+        return 0 == match;
+}
+
+
 void
 test_dirlst_create(void)
 {
@@ -40,7 +65,7 @@ test_dirlst_create(void)
 }
 
 void
-test_dirlst_one_push(void)
+test_dirlst_single(void)
 {
         struct tq_dirlst        *lst;
         struct dirlst           *elm;
@@ -55,15 +80,56 @@ test_dirlst_one_push(void)
 
         CU_ASSERT(2 == n_elms);
 
-        elm = dirlst_pop(lst);
-        CU_ASSERT(0 == strncmp(elm->path, "bar", 3));
-        free(elm);
-
+        CU_ASSERT(test_pop_helper(lst, "bar", 3));
         n_elms = 0;
         TAILQ_FOREACH(elm, lst, dirs)
             n_elms++;
 
         CU_ASSERT(1 == n_elms);
+        CU_ASSERT(EXIT_SUCCESS == dirlst_destroy(&lst));
+}
+
+
+/*
+ * ensure an invalid path_len aborts the push
+ */
+void
+test_dirlst_bad(void)
+{
+        struct tq_dirlst        *lst;
+
+        lst = dirlst_create((const char *)"foo", 3);
+        CU_ASSERT(EXIT_SUCCESS == dirlst_push(lst, "bar", 3));
+        CU_ASSERT(EXIT_FAILURE == dirlst_push(lst, "baz", FILENAME_MAX * 2));
+        CU_ASSERT(test_pop_helper(lst, "bar", 3));
+        CU_ASSERT(EXIT_SUCCESS == dirlst_destroy(&lst));
+}
+
+
+void
+test_dirlst_multi(void)
+{
+        char                     testkeys[][4] = {"bar", "baz", "quux", ""};
+        int                      testkeylen[4];
+        struct tq_dirlst        *lst;
+        struct dirlst           *elm;
+        int                      i, n_elms, ret;
+
+        lst = dirlst_create((const char *)"foo", 3);
+        for(i = 0; i < 3; ++i) {
+                testkeylen[i] = strlen(testkeys[i]);
+                ret = dirlst_push(lst, testkeys[i], testkeylen[i]);
+                CU_ASSERT(EXIT_SUCCESS == ret);
+        }
+
+        n_elms = 0;
+        TAILQ_FOREACH(elm, lst, dirs)
+                n_elms++;
+        CU_ASSERT(4 == n_elms);
+
+        for (i = 2; i >= 0; i--)
+                CU_ASSERT(test_pop_helper(lst, testkeys[i], testkeylen[i]));
+        CU_ASSERT(test_pop_helper(lst, "foo", 3));
         CU_ASSERT(EXIT_SUCCESS == dirlst_destroy(&lst));
 }
 
@@ -120,8 +186,10 @@ main(void)
         if (NULL == CU_add_test(tsuite, "dirlst create", test_dirlst_create))
                 fireball();
 
-        if (NULL == CU_add_test(tsuite, "dirlst push/pop",
-            test_dirlst_one_push))
+        if (NULL == CU_add_test(tsuite, "single push/pop", test_dirlst_single))
+                fireball();
+
+        if (NULL == CU_add_test(tsuite, "multi push/pop", test_dirlst_multi))
                 fireball();
 
         CU_basic_set_mode(CU_BRM_VERBOSE);
