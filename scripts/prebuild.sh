@@ -3,8 +3,8 @@
 
 set -e
 
-echo "[+] creating the damn texinfo file"
-cd docs && ./texinfo_gen.sh && cd ..
+#echo "[+] creating the damn texinfo file"
+#cd docs && ./texinfo_gen.sh && cd ..
 
 echo "[+] setting up automake"
 # if AUTOMAKE + ACLOCAL are not set, explicity search

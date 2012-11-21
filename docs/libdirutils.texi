@@ -1,6 +1,4 @@
 \input texinfo   @c -*-texinfo-*-
-@comment $Id: GNU-Sample-Texts.html,v 1.7 2008/09/19 15:44:59 karl Exp $
-@comment %**start of header
 @setfilename libdirutils.info
 @include version.texi
 @settitle libdirutils @value{VERSION}
@@ -34,7 +32,7 @@ Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
 @end direntry
 
 @titlepage
-@title libdirutils
+@title libdaemon
 @subtitle for version @value{VERSION}, @value{UPDATED}
 @author Kyle Isom (@email{kyle@@tyrfingr.is})
 @page
@@ -45,16 +43,150 @@ Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
 
 @contents
 
+@ifnottex
 @node Top
-@top libdirutils: simple Python-esque file utilities for C
+@top libdaemon
+
+This manual is for libdirutils (version @value{VERSION}, @value{UPDATED}).
+@end ifnottex
 
 @menu
-* Introduction::
+* A Quick Introduction::
+* Functions Provided::
+* Getting the Source::
+* Source Code License::
+* Manual Copyright::
+* Index::
 @end menu
 
-@node Introduction
-@chapter Introduction
+
+@node A Quick Introduction
+@chapter A Quick Introduction
+
+@pindex intro
+@cindex introduction to @command{libdirutils}
+@command{libdirutils} is a utility library inspired by similar functionality
+in the Go and Python programming languages; it provides functions similar
+to @command{rm -r} and @command{mkdir -p}, as well as a convenience function
+to combine the functionality of @command{access(2)} and @command{stat(2)}.
+It provides these functions as convenience functions for working with files
+and directories; as the name implies, it is aimed primarily at directories.
+
+@node Functions Provided
+@chapter Functions Provided
+
+@pindex functions
+@cindex functions provided
+
+@section makedirs
+@example
+int
+makedirs(const char *path, size_t path_len);
+@end example
+@command{makedirs} creates a path and all required parent directories. The
+mode created is the process’s @command{umask(2)} value applied to 0777.
+It returns @command{EXIT_SUCCESS} on success and @command{EXIT_FAILURE}
+on failure.
+
+@section rmdirs
+@example
+int
+rmdirs(const char *path, size_t path_len);
+@end example
+@command{rmdirs} removes a path and all subdirectories and files.
+It returns @command{EXIT_SUCCESS} on success and @command{EXIT_FAILURE}
+on failure.
+
+@section path_exists
+@example
+EXISTS_STATUS
+path_exists(const char *path, size_t path_len);
+@end example
+path_exists combines the functionality of @command{access(2)} and
+@command{stat(2)}. It checks whether the process has access to the file and
+indicates whether it is a regular file, a directory, or if an error occurs.
+The return type is of the enumeration EXISTS_STATUS, which is one of
+
+@itemize
+@item @command{EXISTS_ERROR}: there was an error looking up the file;
+@item @command{EXISTS_NOENT}: the file does not exist;
+@item @command{EXISTS_NOPERM}: the process does not have the appropriate
+permissions to access the file.
+@item @command{EXISTS_DIR}: the file is a directory; and
+@item @command{EXISTS_FILE}: the file is a regular file.
+@end itemize
+
+@node Getting the Source
+@chapter Getting the Source
+
+@pindex obtaining
+@cindex obtaining
+
+@section Dependencies
+If you will be running the unit tests, @url{http://cunit.sourceforge.net/,CUnit}
+is required. If you will be rebuilding the autotools build infrastructure,
+you will need automake 1.11 and autoconf >= 2.59.
+
+@section Development Repository
+The source code repository is available on
+@url{https://github.com/kisom/libdirutils,Github}.
+The code there is in the original autotools source; the @command{autogen.sh}
+script is provided to run through a complete build, including running through
+the provided unit tests:
+
+@example
+$ git clone https://github.com/kisom/libdirutils.git dirutils
+$ cd dirutils
+$ ./autobuild.sh
+@end example
+
+Several utility scripts are provided in the @command{scripts} subdirectory;
+the @command{autobuild.sh} script calls these. Of note, the
+@command{prebuild.sh}
+script, which will set the necessary autotools environment variables and call
+@command{autoreconf}.
+
+@section Release Tarballs
+Release tarballs will be made available via the Github repository's
+@url{https://github.com/kisom/libdirutils/downloads,downloads} section.
+
+Once unpacked, these can be built with the normal
+@command{./configure && make && make install} methods. See
+@command{./configure --help} for additional configuration options.
+
+
+@node Source Code License
+@chapter Source Code License
+
+@pindex license
+@cindex license
+
+The @command{libdirutils} is released under the ISC license:
+
+@example
+Copyright (c) 2012 Kyle Isom <@email{kyle@@tyrfingr.is}>
+
+Permission to use, copy, modify, and distribute this software for any
+purpose with or without fee is hereby granted, provided that the above 
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
+@end example
+
+@node Manual Copyright
+@appendix Manual Copyright
 
 @include cc.texi
+
+@node Index
+@unnumbered Index
+
+@printindex cp
 
 @bye
