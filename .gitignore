@@ -40,3 +40,4 @@ test-driver
 !docs/cc.texi
 !docs/footer.texi
 !docs/header.texi
+!docs/libdirutils.texi

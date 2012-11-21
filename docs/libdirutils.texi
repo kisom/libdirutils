@@ -1,0 +1,60 @@
+\input texinfo   @c -*-texinfo-*-
+@comment $Id: GNU-Sample-Texts.html,v 1.7 2008/09/19 15:44:59 karl Exp $
+@comment %**start of header
+@setfilename libdirutils.info
+@include version.texi
+@settitle libdirutils @value{VERSION}
+@syncodeindex pg cp
+@comment %**end of header
+@copying
+This manual is for libdirutils, a C library providing some Python-like file
+manipulation functions.
+
+Copyright @copyright{} 2012 Kyle Isom <@email{kyle@@tyrfingr.is}>
+
+@quotation
+This document is released under a dual license. These two licenses are the 
+public domain and a Creative Commons Attribution-ShareAlike 3.0 Unported 
+License. The purpose of this dual-license is to attribute you, the end user,
+to use this documentation for whatever purpose you wish. As such, you, the
+end user, are free to select either license at will.
+
+This document is released into the public domain.
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 
+Unported License. To view a copy of this license, visit 
+http://creativecommons.org/licenses/by-sa/3.0/ or send a letter to Creative 
+Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+@end quotation
+@end copying
+
+@dircategory Texinfo documentation system
+@direntry
+* introduction: (intro)Introduction to libdirutils
+@end direntry
+
+@titlepage
+@title libdirutils
+@subtitle for version @value{VERSION}, @value{UPDATED}
+@author Kyle Isom (@email{kyle@@tyrfingr.is})
+@page
+@vskip 0pt plus 1filll
+@paragraphindent 0
+@insertcopying
+@end titlepage
+
+@contents
+
+@node Top
+@top libdirutils: simple Python-esque file utilities for C
+
+@menu
+* Introduction::
+@end menu
+
+@node Introduction
+@chapter Introduction
+
+@include cc.texi
+
+@bye
