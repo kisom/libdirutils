@@ -13,7 +13,7 @@ combine the functionality of \verb|access(2)| and \verb|stat(2)|.
 \subsection*{makedirs}
 \begin{verbatim}
 int
-makedirs(const char *path, size_t path_len);
+makedirs(const char *path);
 \end{verbatim}
 \verb|makedirs| creates a path and all required parent directories. The mode
 created is the process's \verb|umask(2)| value applied to \verb|0777|.
@@ -22,7 +22,7 @@ It returns \verb|EXIT_SUCCESS| on success and \verb|EXIT\_FAILURE| on failure.
 \subsection*{rmdirs}
 \begin{verbatim}
 int
-rmdirs(const char *path, size_t path_len);
+rmdirs(const char *path);
 \end{verbatim}
 \verb|rmdirs| removes a path and all subdirectories and files.
 It returns \verb|EXIT_SUCCESS| on success and \verb|EXIT\_FAILURE| on failure.
@@ -30,7 +30,7 @@ It returns \verb|EXIT_SUCCESS| on success and \verb|EXIT\_FAILURE| on failure.
 \subsection*{path\_exists}
 \begin{verbatim}
 EXISTS_STATUS
-path_exists(const char *path, size_t path_len);
+path_exists(const char *path);
 \end{verbatim}
 \verb|path_exists| combines the functionality of \verb|access(2)| and
 \verb|stat(2)|. It checks whether the process has access to the file

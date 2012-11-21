@@ -37,20 +37,15 @@ test_exists(void)
         char            testdir[] = "testdata/testdir";
         char            testfil[] = "testdata/testfile";
         char            testnot[] = "testdata/nosuchfile";
-        size_t          testdir_len, testfil_len, testnot_len;
         EXISTS_STATUS   ftype;
 
-        testdir_len = strlen(testdir);
-        testfil_len = strlen(testfil);
-        testnot_len = strlen(testnot);
-
-        ftype = path_exists(testdir, testdir_len);
+        ftype = path_exists(testdir);
         CU_ASSERT(EXISTS_DIR == ftype);
 
-        ftype = path_exists(testfil, testfil_len);
+        ftype = path_exists(testfil);
         CU_ASSERT(EXISTS_FILE == ftype);
 
-        ftype = path_exists(testnot, testnot_len);
+        ftype = path_exists(testnot);
         CU_ASSERT(EXISTS_NOENT == ftype);
 }
 
@@ -63,8 +58,8 @@ test_makedirs(void)
          * use the system to ensure we have a clean slate for this test
          */
         system("rm -fr testdata/foo/");
-        CU_ASSERT(EXIT_SUCCESS == makedirs(testpath, strlen(testpath)));
-        CU_ASSERT(EXISTS_DIR == path_exists(testpath, strlen(testpath)));
+        CU_ASSERT(EXIT_SUCCESS == makedirs(testpath));
+        CU_ASSERT(EXISTS_DIR == path_exists(testpath));
         /*
          * we can't guarantee rmdirs yet; this ensures a clean slate.
          */
@@ -76,13 +71,11 @@ test_rmdirs(void)
 {
         char    testpath[] = "testdata/foo";
         char    cmd[FILENAME_MAX];
-        size_t  testpathlen;
 
-        testpathlen = strlen(testpath);
         snprintf(cmd, FILENAME_MAX, "mkdir -p %s/bar/baz", testpath);
         system(cmd);
-        CU_ASSERT(EXIT_SUCCESS == rmdirs(testpath, testpathlen));
-        CU_ASSERT(EXISTS_NOENT == path_exists(testpath, testpathlen));
+        CU_ASSERT(EXIT_SUCCESS == rmdirs(testpath));
+        CU_ASSERT(EXISTS_NOENT == path_exists(testpath));
         /*
          * we can't guarantee rmdirs yet; this ensures a clean slate.
          */

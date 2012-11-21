@@ -32,12 +32,13 @@
 
 
 static int      _parent_exists(const char *);
+static int      _rmdirs(const char *, const char *);
 
 /*
  * Determines whether a directory exists.
  */
 EXISTS_STATUS
-path_exists(const char *path, size_t pathlen)
+path_exists(const char *path)
 {
         struct stat     st;
         int             rv;
@@ -69,12 +70,14 @@ path_exists(const char *path, size_t pathlen)
  * create a path and any directories above it required
  */
 int
-makedirs(const char *path, size_t path_sz)
+makedirs(const char *path)
 {
         struct tq_dirlst        *lst;
         struct dirlst           *elm;
+        size_t                  path_sz;
         char                    *dnam_p, *curpath;
 
+        path_sz = strlen(path);
         lst = dirlst_create(path, path_sz);
         if (NULL == lst)
                 return EXIT_FAILURE;
@@ -105,7 +108,7 @@ makedirs(const char *path, size_t path_sz)
  * remove a directory and any subdirectories
  */
 int
-rmdirs(const char *path, size_t path_len)
+rmdirs(const char *path)
 {
         return EXIT_FAILURE;
 }
@@ -128,7 +131,7 @@ _parent_exists(const char *path)
         path_len = strlen((char *)dnam_p);
         free(name_buf);
 
-        if (EXISTS_DIR != path_exists(dnam_p, path_len))
+        if (EXISTS_DIR != path_exists(dnam_p))
                 return 0;
         else
                 return 1;

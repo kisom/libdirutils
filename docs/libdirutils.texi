@@ -81,7 +81,7 @@ and directories; as the name implies, it is aimed primarily at directories.
 @section makedirs
 @example
 int
-makedirs(const char *path, size_t path_len);
+makedirs(const char *path);
 @end example
 @command{makedirs} creates a path and all required parent directories. The
 mode created is the process’s @command{umask(2)} value applied to 0777.
@@ -91,7 +91,7 @@ on failure.
 @section rmdirs
 @example
 int
-rmdirs(const char *path, size_t path_len);
+rmdirs(const char *path);
 @end example
 @command{rmdirs} removes a path and all subdirectories and files.
 It returns @command{EXIT_SUCCESS} on success and @command{EXIT_FAILURE}
@@ -100,7 +100,7 @@ on failure.
 @section path_exists
 @example
 EXISTS_STATUS
-path_exists(const char *path, size_t path_len);
+path_exists(const char *path);
 @end example
 @command{path_exists} combines the functionality of @command{access(2)} and
 @command{stat(2)}. It checks whether the process has access to the file and

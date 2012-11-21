@@ -35,9 +35,9 @@ enum E_EXISTS_STATUS {
 typedef enum E_EXISTS_STATUS EXISTS_STATUS;
 
 
-int             makedirs(const char *, size_t);
-int             rmdirs(const char *, size_t);
-EXISTS_STATUS   path_exists(const char *, size_t);
+int             makedirs(const char *);
+int             rmdirs(const char *);
+EXISTS_STATUS   path_exists(const char *);
 
 
 #endif
