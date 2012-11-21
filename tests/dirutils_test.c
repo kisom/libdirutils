@@ -59,8 +59,34 @@ test_makedirs(void)
 {
         char     testpath[] = "testdata/foo/bar/baz";
 
+        /*
+         * use the system to ensure we have a clean slate for this test
+         */
+        system("rm -fr testdata/foo/");
         CU_ASSERT(EXIT_SUCCESS == makedirs(testpath, strlen(testpath)));
         CU_ASSERT(EXISTS_DIR == path_exists(testpath, strlen(testpath)));
+        /*
+         * we can't guarantee rmdirs yet; this ensures a clean slate.
+         */
+        system("rm -r testdata/foo/");
+}
+
+void
+test_rmdirs(void)
+{
+        char    testpath[] = "testdata/foo";
+        char    cmd[FILENAME_MAX];
+        size_t  testpathlen;
+
+        testpathlen = strlen(testpath);
+        snprintf(cmd, FILENAME_MAX, "mkdir -p %s/bar/baz", testpath);
+        system(cmd);
+        CU_ASSERT(EXIT_SUCCESS == rmdirs(testpath, testpathlen));
+        CU_ASSERT(EXISTS_NOENT == path_exists(testpath, testpathlen));
+        /*
+         * we can't guarantee rmdirs yet; this ensures a clean slate.
+         */
+        system("rm -r testdata/foo/");
 }
 
 
@@ -116,7 +142,10 @@ main(void)
         if (NULL == CU_add_test(tsuite, "path_exists", test_exists))
                 fireball();
 
-        if (NULL == CU_add_test(tsuite, "makedirs", test_makedirs))
+        if (NULL == CU_add_test(tsuite, "makedirs simple", test_makedirs))
+                fireball();
+
+        if (NULL == CU_add_test(tsuite, "rmdirs simple", test_rmdirs))
                 fireball();
 
         CU_basic_set_mode(CU_BRM_VERBOSE);
