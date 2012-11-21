@@ -29,7 +29,8 @@ enum E_EXISTS_STATUS {
         EXISTS_NOENT,
         EXISTS_NOPERM,
         EXISTS_DIR,
-        EXISTS_FILE
+        EXISTS_FILE,
+        EXISTS_OTHER
 };
 typedef enum E_EXISTS_STATUS EXISTS_STATUS;
 

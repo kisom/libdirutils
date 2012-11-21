@@ -52,7 +52,9 @@ enum E_EXISTS_STATUS {
         EXISTS_NOENT,   /* the path does not exist */
         EXISTS_NOPERM,  /* the process does not have appropriate permissions */
         EXISTS_DIR,     /* the path exists and is a directory */
-        EXISTS_FILE     /* the path exists and is a regular file */
+        EXISTS_FILE,    /* the path exists and is a regular file */
+        EXISTS_OTHER    /* the path exists and is not a directory or regular */
+                        /*     file. */
 };
 .Ed
 .Sh ERRORS

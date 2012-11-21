@@ -112,8 +112,10 @@ The return type is of the enumeration EXISTS_STATUS, which is one of
 @item @command{EXISTS_NOENT}: the file does not exist;
 @item @command{EXISTS_NOPERM}: the process does not have the appropriate
 permissions to access the file.
-@item @command{EXISTS_DIR}: the file is a directory; and
-@item @command{EXISTS_FILE}: the file is a regular file.
+@item @command{EXISTS_DIR}: the file is a directory;
+@item @command{EXISTS_FILE}: the file is a regular file; and
+@item @command{EXISTS_OTHER}: the file could be read and is not a directory
+or regular file.
 @end itemize
 
 @node Getting the Source
