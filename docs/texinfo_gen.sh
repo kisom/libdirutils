@@ -7,5 +7,5 @@ if [ -e ${DOCNAME}.texi ]; then
 fi
 
 pandoc -f latex -o ${DOCNAME}_body.texi ${DOCNAME}.tex
-cat header.texi ${DOCNAME}_body.texi > ${DOCNAME}.texi
+cat header.texi ${DOCNAME}_body.texi footer.texi > ${DOCNAME}.texi
 rm ${DOCNAME}_body.texi

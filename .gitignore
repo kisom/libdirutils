@@ -38,4 +38,5 @@ test-driver
 # in this process of black magic.
 *.texi
 !docs/cc.texi
+!docs/footer.texi
 !docs/header.texi
