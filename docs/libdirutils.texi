@@ -102,7 +102,7 @@ on failure.
 EXISTS_STATUS
 path_exists(const char *path, size_t path_len);
 @end example
-path_exists combines the functionality of @command{access(2)} and
+@command{path_exists} combines the functionality of @command{access(2)} and
 @command{stat(2)}. It checks whether the process has access to the file and
 indicates whether it is a regular file, a directory, or if an error occurs.
 The return type is of the enumeration EXISTS_STATUS, which is one of
