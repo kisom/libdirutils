@@ -40,7 +40,21 @@ provides functionality similar to
 .Nm makedirs
 and
 .Nm rmdirs
-return EXIT_SUCCESS on success and EXIT_FAILURE on failure.
+return EXIT_SUCCESS on success and EXIT_FAILURE on failure. The enum
+returned by
+.Nm path_exists
+is defined in
+.Sy dirutils.h
+as:
+.Bd -literal
+enum E_EXISTS_STATUS {
+        EXISTS_ERROR,   /* an error occurred looking at the file */
+        EXISTS_NOENT,   /* the path does not exist */
+        EXISTS_NOPERM,  /* the process does not have appropriate permissions */
+        EXISTS_DIR,     /* the path exists and is a directory */
+        EXISTS_FILE     /* the path exists and is a regular file */
+};
+.Ed
 .Sh ERRORS
 The most common error will be a permissions error; it may be prudent to
 compare the value of
