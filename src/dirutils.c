@@ -20,7 +20,9 @@
 #include <sys/queue.h>
 #include <sys/stat.h>
 
+#include <err.h>
 #include <errno.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +30,8 @@
 #include "dirutils.h"
 #include "dirlist.h"
 
+
+static int      _parent_exists(const char *);
 
 /*
  * Determines whether a directory exists.
@@ -57,7 +61,7 @@ path_exists(const char *path, size_t pathlen)
         else if (st.st_mode & S_IFREG)
                 return EXISTS_FILE;
         else
-                return EXISTS_ERROR;
+                return EXISTS_OTHER;
 }
 
 
@@ -67,13 +71,33 @@ path_exists(const char *path, size_t pathlen)
 int
 makedirs(const char *path, size_t path_sz)
 {
-        struct tq_dirlst   *lst;
+        struct tq_dirlst        *lst;
+        struct dirlst           *elm;
+        char                    *dnam_p, *curpath;
 
         lst = dirlst_create(path, path_sz);
         if (NULL == lst)
                 return EXIT_FAILURE;
 
-        return EXIT_FAILURE;
+        curpath = strdup(path);
+        while (!_parent_exists(curpath)) {
+                dnam_p = dirname(curpath);
+                free(curpath);
+                curpath = strdup(dnam_p);
+                dirlst_push(lst, curpath, strlen(curpath));
+        }
+        free(curpath);
+
+        while (NULL != (elm = dirlst_pop(lst))) {
+                if (-1 == mkdir(elm->path, 0777)) {
+                        warn("%s", elm->path);
+                        free(elm);
+                        return EXIT_FAILURE;
+                }
+                free(elm);
+        }
+
+        return dirlst_destroy(&lst);
 }
 
 
@@ -81,5 +105,31 @@ makedirs(const char *path, size_t path_sz)
  * remove a directory and any subdirectories
  */
 int
-rmdirs(const char *, size_t);
+rmdirs(const char *path, size_t path_len)
+{
+        return EXIT_FAILURE;
+}
 
+
+/*
+ * Determine whether the parent directory exists, and return true if it
+ * does.
+ */
+int
+_parent_exists(const char *path)
+{
+        char    *name_buf;
+        char    *dnam_p;
+        size_t   path_len;
+
+        name_buf = strdup(path);
+
+        dnam_p = dirname(name_buf);
+        path_len = strlen((char *)dnam_p);
+        free(name_buf);
+
+        if (EXISTS_DIR != path_exists(dnam_p, path_len))
+                return 0;
+        else
+                return 1;
+}

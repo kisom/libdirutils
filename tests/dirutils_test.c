@@ -54,6 +54,15 @@ test_exists(void)
         CU_ASSERT(EXISTS_NOENT == ftype);
 }
 
+void
+test_makedirs(void)
+{
+        char     testpath[] = "testdata/foo/bar/baz";
+
+        CU_ASSERT(EXIT_SUCCESS == makedirs(testpath, strlen(testpath)));
+        CU_ASSERT(EXISTS_DIR == path_exists(testpath, strlen(testpath)));
+}
+
 
 /*
  * Stubs required by the test suite, but for which no functionality is
@@ -105,6 +114,9 @@ main(void)
                 fireball();
 
         if (NULL == CU_add_test(tsuite, "path_exists", test_exists))
+                fireball();
+
+        if (NULL == CU_add_test(tsuite, "makedirs", test_makedirs))
                 fireball();
 
         CU_basic_set_mode(CU_BRM_VERBOSE);
