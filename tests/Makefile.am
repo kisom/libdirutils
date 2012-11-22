@@ -7,4 +7,3 @@ dirlist_test_CFLAGS = $(AM_CFLAGS) -DTEST_SUITE="\"dirlist_test\""
 dirlist_test_SOURCES = ../src/dirlist.c dirlist_test.c 
 dirutils_test_CFLAGS = $(AM_CFLAGS) -DTEST_SUITE="\"dirutils_test\""
 dirutils_test_SOURCES = $(DIRLISTSRC) dirutils_test.c
-

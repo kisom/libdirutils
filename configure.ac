@@ -1,6 +1,6 @@
 AC_PREREQ([2.59])
 AC_INIT([dirutils], [1.0.1], [kyle@tyrfingr.is],
-        [], [https://github.com/kisom/dirutils])
+        [libdirutils], [https://github.com/kisom/dirutils])
 AM_INIT_AUTOMAKE([1.11 foreign no-define])
 AC_CONFIG_SRCDIR([src/dirutils.h])
 AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile docs/Makefile])
