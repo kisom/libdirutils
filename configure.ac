@@ -1,5 +1,5 @@
 AC_PREREQ([2.59])
-AC_INIT([dirutils], [0.1.0-pre], [kyle@tyrfingr.is],
+AC_INIT([dirutils], [1.0.0], [kyle@tyrfingr.is],
         [], [https://github.com/kisom/dirutils])
 AM_INIT_AUTOMAKE([1.11 foreign no-define])
 AC_CONFIG_SRCDIR([src/dirutils.h])
