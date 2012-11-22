@@ -153,8 +153,18 @@ Release tarballs will be made available via the Github repository's
 @url{https://github.com/kisom/libdirutils/downloads,downloads} section.
 
 Once unpacked, these can be built with the normal
-@command{./configure && make && make install} methods. See
-@command{./configure --help} for additional configuration options.
+
+@example
+./configure && make && make install
+@end example
+
+method. See
+
+@example
+./configure --help
+@end example
+
+for additional configuration options.
 
 
 @node Source Code License
