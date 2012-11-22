@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>libdirutils by kisom</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>libdirutils</h1>
+        <p>Directory convenience functions library in C.</p>
+
+        <p class="view"><a href="https://github.com/kisom/libdirutils">View the Project on GitHub <small>kisom/libdirutils</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/kisom/libdirutils/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/kisom/libdirutils/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/kisom/libdirutils">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Introduction</h1>
+
+<p><code>libdirutils</code> is a utility library inspired by similar functionality in
+the Go and Python programming languages; it provides functions similar
+to <code>rm -r</code> and <code>mkdir -p</code>, as well as a convenience function to combine
+the functionality of <code>access(2)</code> and <code>stat(2)</code>.</p>
+
+<h1>Functions Provided</h1>
+
+<h2>makedirs</h2>
+
+<pre><code>int
+makedirs(const char *path);
+</code></pre>
+
+<p><code>makedirs</code> creates a path and all required parent directories. The mode
+created is the process’s <code>umask(2)</code> value applied to <code>0777</code>. It returns
+<code>EXIT_SUCCESS</code> on success and <code>EXIT_FAILURE</code> on failure.</p>
+
+<h2>rmdirs</h2>
+
+<pre><code>int
+rmdirs(const char *path);
+</code></pre>
+
+<p><code>rmdirs</code> removes a path and all subdirectories and files. It returns
+<code>EXIT_SUCCESS</code> on success and <code>EXIT_FAILURE</code> on failure.</p>
+
+<h2>path_exists</h2>
+
+<pre><code>EXISTS_STATUS
+path_exists(const char *path);
+</code></pre>
+
+<p><code>path_exists</code> combines the functionality of <code>access(2)</code> and <code>stat(2)</code>.
+It checks whether the process has access to the file and indicates
+whether it is a regular file, a directory, or if an error occurs. The
+return type is of the enumeration <code>EXISTS_STATUS</code>, which is one of</p>
+
+<ul>
+<li><p><code>EXISTS_ERROR</code>: there was an error looking up the file;</p></li>
+<li><p><code>EXISTS_NOENT</code>: the file does not exist;</p></li>
+<li><p><code>EXISTS_NOPERM</code>: the process does not have the appropriate
+permissions to access the file.</p></li>
+<li><p><code>EXISTS_DIR</code>: the file is a direcotry;</p></li>
+<li><p><code>EXISTS_FILE</code>: the file is a regular file; and</p></li>
+<li><p><code>EXISTS_OTHER</code>: the file could be read and is not a directory or
+regular file.</p></li>
+</ul><h1>Getting the Source</h1>
+
+<h2>Dependencies</h2>
+
+<p>If you will be running the unit tests, <code>CUnit</code><a href="http://cunit.sourceforge.net/">^1</a> is required. If you
+will be rebuilding the autotools build infrastructure, you will need
+automake 1.11 and autoconf &gt;= 2.59.</p>
+
+<h2>Development Repository</h2>
+
+<p>The source code repository is available on Github<a href="https://github.com/kisom/libdirutils">^2</a>. The code there is
+in the original autotools source; the <code>autobuild.sh</code> script is provided
+to run through a complete build, including running through the provided
+unit tests:</p>
+
+<pre><code>$ git clone https://github.com/kisom/libdirutils.git dirutils
+$ cd dirutils
+$ ./autobuild.sh
+</code></pre>
+
+<p>Several utility scripts are provided in the <code>scripts</code> subdirectory; the
+<code>autobuild.sh</code> script calls these. Of note, the <code>prebuild.sh</code> script,
+which will set the necessary autotools environment variables and call
+<code>autoreconf</code>.</p>
+
+<h2>Release Tarballs</h2>
+
+<p>Release tarballs will be made available via the Github repository’s
+downloads<a href="https://github.com/kisom/libdirutils/downloads">^3</a> section.</p>
+
+<p>Once unpacked, these can be built with the normal</p>
+
+<pre><code>    ./configure &amp;&amp; make &amp;&amp; make install
+</code></pre>
+
+<p>method. See</p>
+
+<pre><code>    ./configure --help
+</code></pre>
+
+<p>for additional configuration options.</p>
+
+<h1>License</h1>
+
+<pre><code>Copyright (c) 2012 Kyle Isom &lt;kyle@tyrfingr.is&gt;
+
+Permission to use, copy, modify, and distribute this software for any
+purpose with or without fee is hereby granted, provided that the above 
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/kisom">kisom</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
