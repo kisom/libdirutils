@@ -18,15 +18,21 @@
 
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 #include <err.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sysexits.h>
+#include <unistd.h>
 
 #include <dirutils.h>
+
+static int      test_write_file_helper(const char *, const char *);
+static int      test_touch_file_helper(const char *);
 
 /*
  * test the use of the exists function
@@ -112,6 +118,60 @@ test_rmdirs_simple(void)
 }
 
 
+void
+test_dirutils(void)
+{
+        char    testpath[] = "testdata/dirutils";
+        char    tmp_path[FILENAME_MAX + 1];
+
+        /* set up directory structure */
+        CU_ASSERT(EXISTS_NOENT == path_exists(testpath));
+        snprintf(tmp_path, FILENAME_MAX, "%s/foo/bar", testpath);
+        CU_ASSERT(EXIT_SUCCESS == makedirs(tmp_path));
+        CU_ASSERT(EXISTS_DIR == path_exists(tmp_path));
+        snprintf(tmp_path, FILENAME_MAX, "%s/foo/baz", testpath);
+        CU_ASSERT(EXIT_SUCCESS == makedirs(tmp_path));
+        CU_ASSERT(EXISTS_DIR == path_exists(tmp_path));
+
+        /* add a few files */
+        snprintf(tmp_path, FILENAME_MAX, "%s/foo/quux", testpath);
+        CU_ASSERT(EXIT_SUCCESS == test_touch_file_helper(tmp_path));
+
+        CU_ASSERT_FATAL(EXIT_SUCCESS == rmdirs(testpath));
+        CU_ASSERT_FATAL(EXISTS_NOENT == path_exists(testpath));
+}
+
+
+/*
+ * utility function to touch a file
+ */
+static int
+test_write_file_helper(const char *path, const char *data)
+{
+        ssize_t wrsz;
+        size_t  data_len;
+        int     fail, fd;
+
+        fail = EXIT_SUCCESS;
+        data_len = strlen(data);
+        fd = open(path, O_WRONLY|O_CREAT, S_IRUSR| S_IWUSR);
+        if (-1 == fd)
+                return EXIT_FAILURE;
+        wrsz = write(fd, data, data_len);
+        if (wrsz != data_len)
+                fail = EXIT_FAILURE;
+        if (-1 == close(fd))
+                fail = EXIT_FAILURE;
+        return fail;
+}
+
+
+static int
+test_touch_file_helper(const char *path)
+{
+        return test_write_file_helper(path, "");
+}
+
 /*
  * Stubs required by the test suite, but for which no functionality is
  * required in this code. init_test is called each time a test is run,
@@ -171,6 +231,9 @@ main(void)
                 fireball();
 
         if (NULL == CU_add_test(tsuite, "simple rmdirs", test_rmdirs_simple))
+                fireball();
+
+        if (NULL == CU_add_test(tsuite, "full test", test_dirutils))
                 fireball();
 
         CU_basic_set_mode(CU_BRM_VERBOSE);
