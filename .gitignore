@@ -33,6 +33,9 @@ test-driver
 *.pdf
 *.html
 
+# keep the example's Makefile
+!example/Makefile
+
 # texinfo is generated from a script, so it may be written in LaTeX
 # and I don't have to write texinfo crap or fill my head with its
 # nonsense and lies. There are, however, a few texinfo templates used
