@@ -21,7 +21,6 @@
 #include <sys/stat.h>
 
 #include <dirent.h>
-#include <err.h>
 #include <errno.h>
 #include <libgen.h>
 #include <stdio.h>
@@ -94,7 +93,6 @@ makedirs(const char *path)
 
         while (NULL != (elm = dirlst_pop(lst))) {
                 if (-1 == mkdir(elm->path, 0777)) {
-                        warn("%s", elm->path);
                         free(elm);
                         return EXIT_FAILURE;
                 }
