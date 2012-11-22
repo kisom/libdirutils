@@ -45,3 +45,8 @@ test-driver
 !docs/footer.texi
 !docs/header.texi
 !docs/libdirutils.texi
+
+# generated distributions
+libdirutils-*
+*.tar.*
+*.zip
