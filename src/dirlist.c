@@ -105,19 +105,3 @@ dirlst_destroy(struct tq_dirlst **lstp)
         *lstp = NULL;
         return EXIT_SUCCESS;
 }
-
-/*
-void
-dirlst_dump(struct tq_dirlst *lst)
-{
-        struct dirlst   *elm;
-        int              n_elms;
-
-        n_elms = 0;
-        TAILQ_FOREACH(elm, lst, dirs) {
-                printf("\t[*] element -> %s\n", elm->path);
-                n_elms++;
-        }
-        printf("[+] %d elements\n", n_elms);
-}
-*/
