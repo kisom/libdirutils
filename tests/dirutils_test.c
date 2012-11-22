@@ -123,6 +123,7 @@ test_dirutils(void)
 {
         char    testpath[] = "testdata/dirutils";
         char    tmp_path[FILENAME_MAX + 1];
+        char    lnk_path[FILENAME_MAX + 1];
 
         /* set up directory structure */
         CU_ASSERT(EXISTS_NOENT == path_exists(testpath));
@@ -136,6 +137,20 @@ test_dirutils(void)
         /* add a few files */
         snprintf(tmp_path, FILENAME_MAX, "%s/foo/quux", testpath);
         CU_ASSERT(EXIT_SUCCESS == test_touch_file_helper(tmp_path));
+        CU_ASSERT(EXISTS_FILE == path_exists(tmp_path));
+        snprintf(tmp_path, FILENAME_MAX, "%s/foo/bar/xyzzy", testpath);
+        snprintf(lnk_path, FILENAME_MAX, "%s/foo/baz/xyzzy", testpath);
+        CU_ASSERT(EXIT_SUCCESS == test_write_file_helper(tmp_path,
+                  "some data should go here"));
+        CU_ASSERT(EXISTS_FILE == path_exists(tmp_path));
+        CU_ASSERT(-1 != link(tmp_path, lnk_path));
+        CU_ASSERT(EXISTS_FILE == path_exists(lnk_path));
+        snprintf(tmp_path, FILENAME_MAX, "%s/foo/bar/thud", testpath);
+        snprintf(lnk_path, FILENAME_MAX, "%s/foo/baz/fred", testpath);
+        CU_ASSERT(EXIT_SUCCESS == test_write_file_helper(tmp_path,
+                    "we want something for the link"));
+        CU_ASSERT(EXISTS_FILE == path_exists(tmp_path));
+        CU_ASSERT(-1 != symlink(tmp_path, lnk_path));
 
         CU_ASSERT_FATAL(EXIT_SUCCESS == rmdirs(testpath));
         CU_ASSERT_FATAL(EXISTS_NOENT == path_exists(testpath));
