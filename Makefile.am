@@ -6,3 +6,5 @@ dist_noinst_DATA = LICENSE                      \
                    README.md                    \
                    example/                     \
                    autobuild.sh
+
+test: check
