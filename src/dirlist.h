@@ -21,8 +21,8 @@
 #define __DIRUTILS_DIRLIST_H
 
 
-#include <sys/queue.h>
 #include <stdio.h>
+#include "queue.h"
 
 
 struct dirlst {

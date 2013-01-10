@@ -17,7 +17,6 @@
  */
 
 #include <sys/types.h>
-#include <sys/queue.h>
 
 #include <errno.h>
 #include <stdio.h>
@@ -25,6 +24,7 @@
 #include <string.h>
 
 #include "dirlist.h"
+#include "queue.h"
 
 
 /*

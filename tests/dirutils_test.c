@@ -58,12 +58,13 @@ test_exists(void)
 void
 test_makedirs(void)
 {
-        char     testpath[] = "testdata/foo/bar/baz";
+        char     testpath[] = "testdata/foo/bar/baz\0";
 
         /*
          * use the system to ensure we have a clean slate for this test
          */
-        system("rm -fr testdata/foo/");
+        if (EXISTS_DIR == path_exists(testpath))
+                system("rm -fr testdata/foo/");
         CU_ASSERT(EXIT_SUCCESS == makedirs(testpath));
         CU_ASSERT(EXISTS_DIR == path_exists(testpath));
         /*
@@ -75,10 +76,11 @@ test_makedirs(void)
 void
 test_empty_rmdirs(void)
 {
-        char    testpath[] = "testdata/foo";
+        char    testpath[20] = "testdata/foo";
         char    cmd[FILENAME_MAX];
         int     rv;
 
+        memset(cmd, 0x0, FILENAME_MAX);
         snprintf(cmd, FILENAME_MAX, "mkdir -p %s/bar/baz", testpath);
         system(cmd);
         CU_ASSERT(EXIT_SUCCESS == (rv = rmdirs(testpath)));
@@ -101,8 +103,10 @@ test_rmdirs_simple(void)
         char    cmd[FILENAME_MAX];
         int     rv;
 
+        memset(cmd, 0x0, FILENAME_MAX);
         snprintf(cmd, FILENAME_MAX, "mkdir -p %s/bar/baz", testpath);
         system(cmd);
+        memset(cmd, 0x0, FILENAME_MAX);
         snprintf(cmd, FILENAME_MAX, "touch %s/bar/quux", testpath);
         system(cmd);
         CU_ASSERT(EXIT_SUCCESS == (rv = rmdirs(testpath)));

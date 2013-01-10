@@ -86,7 +86,6 @@ makedirs(const char *path)
         curpath = strdup(path);
         while (!_parent_exists(curpath)) {
                 dnam_p = dirname(curpath);
-                free(curpath);
                 curpath = strdup(dnam_p);
                 dirlst_push(lst, curpath, strlen(curpath));
         }
@@ -129,7 +128,6 @@ _parent_exists(const char *path)
 
         dnam_p = dirname(name_buf);
         path_len = strlen((char *)dnam_p);
-        free(name_buf);
 
         if (EXISTS_DIR != path_exists(dnam_p))
                 return 0;
