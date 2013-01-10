@@ -4,5 +4,5 @@ compiler:
   - gcc
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq libcunit1-dev libcunit1 make-info
+ - sudo apt-get install -qq libcunit1-dev libcunit1 makeinfo
 script: autoreconf -i && ./configure && make && make check
