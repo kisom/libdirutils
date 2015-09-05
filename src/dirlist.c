@@ -33,25 +33,29 @@
 struct tq_dirlst
 *dirlst_create(const char *init_path, size_t init_path_sz)
 {
-        struct tq_dirlst        *path_lst;
-        struct dirlst           *elm;
+	struct tq_dirlst	*path_lst;
+	struct dirlst		*elm;
 
-        if (init_path_sz > FILENAME_MAX)
-                return NULL;
-        path_lst = calloc(1, sizeof(struct tq_dirlst));
-        if (NULL == path_lst)
-                return path_lst;
-        elm = calloc(1, sizeof(struct dirlst));
-        if (NULL == elm) {
-                free(path_lst);
-                return NULL;
-        }
-        memcpy(elm->path, init_path, init_path_sz);
+	if (init_path_sz > FILENAME_MAX) {
+		return NULL;
+	}
 
-        TAILQ_INIT(path_lst);
-        TAILQ_INSERT_HEAD(path_lst, elm, dirs);
+	path_lst = calloc(1, sizeof(struct tq_dirlst));
+	if (NULL == path_lst) {
+		return path_lst;
+	}
 
-        return path_lst;
+	elm = calloc(1, sizeof(struct dirlst));
+	if (NULL == elm) {
+		free(path_lst);
+		return NULL;
+	}
+	memcpy(elm->path, init_path, init_path_sz);
+
+	TAILQ_INIT(path_lst);
+	TAILQ_INSERT_HEAD(path_lst, elm, dirs);
+
+	return path_lst;
 }
 
 
@@ -61,16 +65,20 @@ struct tq_dirlst
 int
 dirlst_push(struct tq_dirlst *lst, const char *new_dir, size_t new_dir_sz)
 {
-        struct dirlst   *elm;
+	struct dirlst	*elm;
 
-        if (new_dir_sz > FILENAME_MAX)
-                return EXIT_FAILURE;
-        elm = calloc(1, sizeof(struct dirlst));
-        if (NULL == elm)
-                return EXIT_FAILURE;
-        strncpy(elm->path, new_dir, FILENAME_MAX);
-        TAILQ_INSERT_HEAD(lst, elm, dirs);
-        return EXIT_SUCCESS;
+	if (new_dir_sz > FILENAME_MAX) {
+		return EXIT_FAILURE;
+	}
+
+	elm = calloc(1, sizeof(struct dirlst));
+	if (NULL == elm) {
+		return EXIT_FAILURE;
+	}
+
+	strncpy(elm->path, new_dir, FILENAME_MAX);
+	TAILQ_INSERT_HEAD(lst, elm, dirs);
+	return EXIT_SUCCESS;
 }
 
 
@@ -80,28 +88,34 @@ dirlst_push(struct tq_dirlst *lst, const char *new_dir, size_t new_dir_sz)
 struct dirlst
 *dirlst_pop(struct tq_dirlst *lst)
 {
-        struct dirlst   *elm;
+	struct dirlst	*elm;
 
-        if (TAILQ_EMPTY(lst))
-                return NULL;
-        elm = TAILQ_FIRST(lst);
-        TAILQ_REMOVE(lst, elm, dirs);
-        return elm;
+	if (TAILQ_EMPTY(lst)) {
+		return NULL;
+	}
+
+	elm = TAILQ_FIRST(lst);
+	TAILQ_REMOVE(lst, elm, dirs);
+	return elm;
 }
 
 
 int
 dirlst_destroy(struct tq_dirlst **lstp)
 {
-        struct dirlst   *elm;
+	struct dirlst	*elm;
 
-        while ((elm = TAILQ_FIRST(*lstp))) {
-                TAILQ_REMOVE(*lstp, elm, dirs);
-                free(elm);
-        }
-        if (!TAILQ_EMPTY(*lstp))
-                return EXIT_FAILURE;
-        free(*lstp);
-        *lstp = NULL;
-        return EXIT_SUCCESS;
+	while ((elm = TAILQ_FIRST(*lstp))) {
+		TAILQ_REMOVE(*lstp, elm, dirs);
+		free(elm);
+	}
+
+	if (!TAILQ_EMPTY(*lstp)) {
+		return EXIT_FAILURE;
+	}
+
+	free(*lstp);
+	*lstp = NULL;
+	return EXIT_SUCCESS;
 }
+

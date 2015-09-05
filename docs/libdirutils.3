@@ -18,6 +18,11 @@
 .Fo rmdirs
 .Fa "const char *path"
 .Fc
+.Ft int
+.Fo walkpath
+.Fa "const char *root"
+.Fa "dirwalk_action action"
+.Fa "unsigned char mask"
 .Sh DESCRIPTION
 .Nm
 provides a number of convenience functions for working with files and
@@ -33,6 +38,25 @@ of the file.
 .Nm rmdirs
 provides functionality similar to
 .Ic rm -r .
+.Nm walkpath
+walks through a path on disk and calls an action on a file if it
+matches the file type mask. The mask should include some of the
+file types listed in
+.Xr readdir 3 ,
+such as DT_DIR or DT_REG. The convenience definitions
+.Ic FT_ANY
+and
+.Ic FT_STD
+are provided; the former matches any file type and the latter matches
+regular files and directories. Note that this will not follow links.
+The action is defined in the dirutils.h header as
+.Ic typedef int (*dirwalk_action)(const char *) ;
+it takes a NULL-terminated path and does what it will with that path.
+It should return -1 on failure and 0 on success. Note that in the case
+where the path provided to
+.Nm walkdir
+is not a directory, but its type matches the mask, the action will
+still be run on it.
 .Sh RETURN VALUES
 .Nm makedirs
 and

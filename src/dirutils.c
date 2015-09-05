@@ -32,8 +32,8 @@
 #include "dirlist.h"
 
 
-static int      _parent_exists(const char *);
-static int      _rmdirs(const char *);
+static int	_parent_exists(const char *);
+static int	_rmdirs(const char *);
 
 /*
  * Determines whether a directory exists.
@@ -41,29 +41,32 @@ static int      _rmdirs(const char *);
 EXISTS_STATUS
 path_exists(const char *path)
 {
-        struct stat     st;
-        int             rv;
+	struct stat	st;
+	int		rv;
 
-        rv = stat(path, &st);
-        if (rv == -1) {
-                switch (errno) {
-                case EACCES:
-                        return EXISTS_NOPERM;
-                        break;
-                case ENOENT:
-                        return EXISTS_NOENT;
-                        break;
-                default:
-                        return EXISTS_ERROR;
-                }
-        }
+	rv = stat(path, &st);
+	if (rv == -1) {
+		switch (errno) {
+		case EACCES:
+			return EXISTS_NOPERM;
+			break;
+		case ENOENT:
+			return EXISTS_NOENT;
+			break;
+		default:
+			return EXISTS_ERROR;
+		}
+	}
 
-        if (st.st_mode & S_IFDIR)
-                return EXISTS_DIR;
-        else if (st.st_mode & S_IFREG)
+	if (st.st_mode & S_IFDIR) {
+		return EXISTS_DIR;
+	}
+	else if (st.st_mode & S_IFREG) {
                 return EXISTS_FILE;
-        else
-                return EXISTS_OTHER;
+	}
+	else {
+		return EXISTS_OTHER;
+	}
 }
 
 
@@ -73,33 +76,33 @@ path_exists(const char *path)
 int
 makedirs(const char *path)
 {
-        struct tq_dirlst        *lst;
-        struct dirlst           *elm;
-        size_t                  path_sz;
-        char                    *dnam_p, *curpath;
+	struct tq_dirlst	*lst;
+	struct dirlst		*elm;
+	size_t			path_sz;
+	char			*dnam_p, *curpath;
 
-        path_sz = strlen(path);
-        lst = dirlst_create(path, path_sz);
-        if (NULL == lst)
-                return EXIT_FAILURE;
+	path_sz = strlen(path);
+	lst = dirlst_create(path, path_sz);
+	if (NULL == lst)
+		return EXIT_FAILURE;
 
-        curpath = strdup(path);
-        while (!_parent_exists(curpath)) {
-                dnam_p = dirname(curpath);
-                curpath = strdup(dnam_p);
-                dirlst_push(lst, curpath, strlen(curpath));
-        }
-        free(curpath);
+	curpath = strdup(path);
+	while (!_parent_exists(curpath)) {
+		dnam_p = dirname(curpath);
+		curpath = strdup(dnam_p);
+		dirlst_push(lst, curpath, strlen(curpath));
+	}
+	free(curpath);
 
-        while (NULL != (elm = dirlst_pop(lst))) {
-                if (-1 == mkdir(elm->path, 0777)) {
-                        free(elm);
-                        return EXIT_FAILURE;
-                }
-                free(elm);
-        }
+	while (NULL != (elm = dirlst_pop(lst))) {
+		if (-1 == mkdir(elm->path, 0777)) {
+			free(elm);
+			return EXIT_FAILURE;
+		}
+		free(elm);
+	}
 
-        return dirlst_destroy(&lst);
+	return dirlst_destroy(&lst);
 }
 
 
@@ -109,7 +112,7 @@ makedirs(const char *path)
 int
 rmdirs(const char *path)
 {
-        return _rmdirs(path);
+	return _rmdirs(path);
 }
 
 
@@ -120,19 +123,18 @@ rmdirs(const char *path)
 int
 _parent_exists(const char *path)
 {
-        char    *name_buf;
-        char    *dnam_p;
-        size_t   path_len;
+	char	*name_buf;
+	char	*dnam_p;
 
-        name_buf = strdup(path);
+	name_buf = strdup(path);
 
-        dnam_p = dirname(name_buf);
-        path_len = strlen((char *)dnam_p);
-
-        if (EXISTS_DIR != path_exists(dnam_p))
-                return 0;
-        else
-                return 1;
+	dnam_p = dirname(name_buf);
+	if (EXISTS_DIR != path_exists(dnam_p)) {
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
 
@@ -142,37 +144,42 @@ _parent_exists(const char *path)
 int
 _rmdirs(const char *path)
 {
-        char             child[FILENAME_MAX + 1];
-        struct dirent   *dp;
-        DIR             *dirp;
-        int              fail;
+	char		 child[FILENAME_MAX + 1];
+	struct dirent	*dp;
+	DIR		*dirp;
+	int		 fail;
 
-        if (NULL == (dirp = opendir(path)))
-                return EXIT_FAILURE;
-        while (NULL != (dp = readdir(dirp))) {
-                if (0 == strncmp("..", dp->d_name, 3))
-                        continue;
-                if (0 == strncmp(".", dp->d_name, 2))
-                        continue;
-                snprintf(child, FILENAME_MAX, "%s/%s", path, dp->d_name);
-                if (DT_DIR == dp->d_type) {
-                        fail = _rmdirs(child);
-                        if (EXIT_FAILURE == fail)
-                                break;
-                } else {
-                        fail = unlink(child);
-                        if (-1 == fail) {
-                                fail = EXIT_FAILURE;
-                                break;
-                        }
-                }
-        }
-        if (-1 == closedir(dirp))
-                return EXIT_FAILURE;
-        if (EXIT_FAILURE == fail)
-                return EXIT_FAILURE;
-        else if (-1 == rmdir(path))
-                return EXIT_FAILURE;
-        else
-                return EXIT_SUCCESS;
+	if (NULL == (dirp = opendir(path)))
+		return EXIT_FAILURE;
+	while (NULL != (dp = readdir(dirp))) {
+		if (0 == strncmp("..", dp->d_name, 3))
+			continue;
+		if (0 == strncmp(".", dp->d_name, 2))
+			continue;
+		snprintf(child, FILENAME_MAX, "%s/%s", path, dp->d_name);
+		if (DT_DIR == dp->d_type) {
+			fail = _rmdirs(child);
+			if (EXIT_FAILURE == fail) {
+				break;
+			}
+		}
+		else {
+			fail = unlink(child);
+			if (-1 == fail) {
+				fail = EXIT_FAILURE;
+				break;
+			}
+		}
+	}
+	if (-1 == closedir(dirp))
+		return EXIT_FAILURE;
+	if (EXIT_FAILURE == fail) {
+		return EXIT_FAILURE;
+	}
+	else if (-1 == rmdir(path)) {
+		return EXIT_FAILURE;
+	}
+	else {
+		return EXIT_SUCCESS;
+	}
 }

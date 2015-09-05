@@ -5,25 +5,10 @@
 @syncodeindex pg cp
 @comment %**end of header
 @copying
-This manual is for libdirutils, a C library providing some Python-like file
-manipulation functions.
+This manual is for libdirutils, a C library providing some utility
+functions for manipulating files and working with directories.
 
 Copyright @copyright{} 2012 Kyle Isom <@email{kyle@@tyrfingr.is}>
-
-@quotation
-This document is released under a dual license. These two licenses are the 
-public domain and a Creative Commons Attribution-ShareAlike 3.0 Unported 
-License. The purpose of this dual-license is to attribute you, the end user,
-to use this documentation for whatever purpose you wish. As such, you, the
-end user, are free to select either license at will.
-
-This document is released into the public domain.
-
-This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 
-Unported License. To view a copy of this license, visit 
-http://creativecommons.org/licenses/by-sa/3.0/ or send a letter to Creative 
-Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
-@end quotation
 @end copying
 
 @dircategory Texinfo documentation system
@@ -32,7 +17,7 @@ Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
 @end direntry
 
 @titlepage
-@title libdaemon
+@title libdirutils
 @subtitle for version @value{VERSION}, @value{UPDATED}
 @author Kyle Isom (@email{kyle@@tyrfingr.is})
 @page
@@ -45,7 +30,7 @@ Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
 
 @ifnottex
 @node Top
-@top libdaemon
+@top libdirutils
 
 This manual is for libdirutils (version @value{VERSION}, @value{UPDATED}).
 @end ifnottex
@@ -100,23 +85,137 @@ main(void)
         printf("[+] libdirutils example program\n\n");
 
         printf("[+] mkdir -p %s\n", mkdir_path);
-        if (EXIT_FAILURE == makedirs(mkdir_path))
+        if (EXIT_FAILURE == makedirs(mkdir_path)) @{
                 err(EXIT_FAILURE, "makedirs(%s)", mkdir_path);
+        @}
 
         printf("[+] ensuring %s exists...\n", mkdir_path);
-        if (EXISTS_DIR != path_exists(mkdir_path))
+        if (EXISTS_DIR != path_exists(mkdir_path)) @{
                 errx(EXIT_FAILURE, "%s was not created", mkdir_path);
+        @}
 
         printf("[+] rm -r %s\n", rmdir_path);
-        if (EXIT_FAILURE == rmdirs(rmdir_path))
+        if (EXIT_FAILURE == rmdirs(rmdir_path)) @{
                 err(EXIT_FAILURE, "rmdirs(%s)", rmdir_path);
+        @}
 
         printf("[+] ensuring %s was removed...\n", rmdir_path);
-        if (EXISTS_NOENT != path_exists(rmdir_path))
+        if (EXISTS_NOENT != path_exists(rmdir_path)) @{
                 errx(EXIT_FAILURE, "%s was not removed", mkdir_path);
-        else
+        @}
+        else @{
                 printf("[+] done.\n");
+        @}
         return EXIT_SUCCESS;
+@}
+@end smallexample
+
+@section A simple @code{ls}
+
+This is a simple file lister.
+
+@smallexample
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <getopt.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include <dirutils.h>
+
+
+int
+print_filename(const char *path)
+@{
+        struct stat         st;
+        size_t                 len;
+        int                 skip = 0;
+        static int         out = 0;
+
+        /*
+         * If a file doesn't exist, don't show it. It's not considered
+         * an error.
+         */
+        if (-1 == stat(path, &st)) @{
+                printf("ENOENT\n");
+                return 0;
+        @}
+
+        if (path == strstr(path, "./")) @{
+                skip = 2;
+        @}
+
+        len = strnlen(path, FILENAME_MAX);
+        if (0 == len) @{
+                return 0;
+        @}
+        out += strnlen(path, FILENAME_MAX) + 2;
+        printf("%s%s\t", path+skip, S_ISDIR(st.st_mode) ? "/" : " ");
+        if (out > 80) @{
+                printf("\n");
+                out = 0;
+        @}
+        return 0;
+@}
+
+
+static void
+usage(const char *argv0)
+@{
+        printf("Usage: %s [-hr] files...\n");
+        printf("List files, or the contents of the current directory");
+        printf("if no files\nare given.\n");
+        printf("Flags:\n");
+        printf("\t-h\tDisplay this help message.\n");
+        printf("\t-r\tRecursively list files.\n");
+@}
+
+
+int
+main(int argc, char *argv[])
+@{
+        int                i;
+        int                opt;
+        int                ret;
+        unsigned char        mask = FT_STD|FT_NODESCEND;
+
+        while (-1 != (opt = getopt(argc, argv, "hr"))) @{
+                switch (opt) @{
+                case 'h':
+                        usage(argv[0]);
+                        exit(0);
+                case 'r':
+                        mask &= ~FT_NODESCEND;
+                        break;
+                default:
+                        usage(argv[0]);
+                        exit(1);
+                @}
+        @}
+
+        argc -= optind;
+        argv += optind;
+
+        if (0 == argc) @{
+                ret = walkdir(".", print_filename, mask);
+                printf("\n");
+        @}
+        else @{
+                for (i = 1; i < argc; i++) @{
+                        printf("%s:\n", argv[i]);
+                        ret = walkdir(argv[i], print_filename, FT_STD);
+                        if (-1 == ret) @{
+                                break;
+                        @}
+                        printf("\n");
+                @}
+        @}
+        
+        return ret;
 @}
 @end smallexample
 
@@ -167,6 +266,28 @@ permissions to access the file.
 or regular file.
 @end itemize
 
+@section walkdir
+@example
+typedef int (*dirwalk_action)(const char *);
+
+extern const unsigned char	FT_ANY;
+extern const unsigned char	FT_STD;
+
+int
+walkdir(const char *path, dirwalk_action action, unsigned char mask);
+@end example
+
+walks through a path on disk and calls an action on a file if it
+matches the file type mask. The mask should include some of the file
+types listed in @code{readdir(3)} such as @code{DT_DIR} or
+@code{DT_REG}. The convenience constants @var{FT_ANY} and @var{FT_STD}
+are provided; the former matches any file type and the latter matches
+regular files and directories. Note that this will not follow links.
+The @code{dirwalk_action} function should take a NULL-terminated path,
+and should return -1 on failure and 0 on success. Note that in the
+case where the path provided to @code{walkdir} is not a directory, but
+its type matches @var{mask}, the action will still be run on it.
+
 @node Getting the Source
 @chapter Getting the Source
 
@@ -197,25 +318,6 @@ the @command{autobuild.sh} script calls these. Of note, the
 script, which will set the necessary autotools environment variables and call
 @command{autoreconf}.
 
-@section Release Tarballs
-Release tarballs will be made available via the Github repository's
-@url{https://github.com/kisom/libdirutils/downloads,downloads} section.
-
-Once unpacked, these can be built with the normal
-
-@example
-./configure && make && make install
-@end example
-
-method. See
-
-@example
-./configure --help
-@end example
-
-for additional configuration options.
-
-
 @node Source Code License
 @appendix Source Code License
 
@@ -228,7 +330,7 @@ The @command{libdirutils} is released under the ISC license:
 Copyright (c) 2012 Kyle Isom <@email{kyle@@tyrfingr.is}>
 
 Permission to use, copy, modify, and distribute this software for any
-purpose with or without fee is hereby granted, provided that the above 
+purpose with or without fee is hereby granted, provided that the above
 copyright notice and this permission notice appear in all copies.
 
 THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
@@ -237,13 +339,8 @@ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
 ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 @end example
-
-@node Manual Copyright
-@appendix Manual Copyright
-
-@include cc.texi
 
 @node Index
 @unnumbered Index
@@ -251,3 +348,4 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 @printindex cp
 
 @bye
+

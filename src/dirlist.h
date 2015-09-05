@@ -22,6 +22,7 @@
 
 
 #include <stdio.h>
+#include <dirent.h>
 #include "queue.h"
 
 
@@ -32,10 +33,10 @@ struct dirlst {
 TAILQ_HEAD(tq_dirlst, dirlst);
 
 
-struct tq_dirlst        *dirlst_create(const char *, size_t);
-int                      dirlst_push(struct tq_dirlst *, const char *, size_t);
-struct dirlst           *dirlst_pop(struct tq_dirlst *);
-int                      dirlst_destroy(struct tq_dirlst **);
+struct tq_dirlst	*dirlst_create(const char *, size_t);
+int			 dirlst_push(struct tq_dirlst *, const char *, size_t);
+struct dirlst		*dirlst_pop(struct tq_dirlst *);
+int			 dirlst_destroy(struct tq_dirlst **);
 
 
 #endif
