@@ -40,7 +40,6 @@ This manual is for libdirutils (version @value{VERSION}, @value{UPDATED}).
 * Functions Provided::
 * Getting the Source::
 * Source Code License::
-* Manual Copyright::
 * Index::
 @end menu
 
