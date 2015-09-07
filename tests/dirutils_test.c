@@ -83,12 +83,13 @@ test_empty_rmdirs(void)
         memset(cmd, 0x0, FILENAME_MAX);
         snprintf(cmd, FILENAME_MAX, "mkdir -p %s/bar/baz", testpath);
         system(cmd);
-        CU_ASSERT(EXIT_SUCCESS == (rv = rmdirs(testpath)));
-        if (EXIT_FAILURE == rv) {
-                printf("\n");
-                warn("rmdirs");
-                system("rm -r testdata/foo/");
-        }
+	rv = rmdirs(testpath);
+	if (EXIT_FAILURE == rv) {
+		printf("\n");
+		warn("rmdirs");
+		system("rm -fr testdata/foo/");
+	}	
+        CU_ASSERT(EXIT_SUCCESS == rv);
         CU_ASSERT(EXISTS_NOENT == path_exists(testpath));
         /*
          * we can't guarantee rmdirs yet; this ensures a clean slate.
@@ -109,15 +110,16 @@ test_rmdirs_simple(void)
         memset(cmd, 0x0, FILENAME_MAX);
         snprintf(cmd, FILENAME_MAX, "touch %s/bar/quux", testpath);
         system(cmd);
-        CU_ASSERT(EXIT_SUCCESS == (rv = rmdirs(testpath)));
-        if (EXIT_FAILURE == rv) {
-                printf("\n");
-                warn("rmdirs");
-                /*
-                 * we can't guarantee rmdirs yet; this ensures a clean slate.
-                 */
-                system("rm -r testdata/foo/ 2>/dev/null");
-        }
+	rv = rmdirs(testpath);
+	if (EXIT_FAILURE == rv) {
+		printf("\n");
+		warn("rmdirs");
+		/*
+		 * we can't guarantee rmdirs yet; this ensures a clean slate.
+		 */
+		system("rm -r testdata/foo/ 2>/dev/null");
+	}	
+        CU_ASSERT(EXIT_SUCCESS == rv);
         CU_ASSERT(EXISTS_NOENT == path_exists(testpath));
 }
 
@@ -145,14 +147,14 @@ test_dirutils(void)
         snprintf(tmp_path, FILENAME_MAX, "%s/foo/bar/xyzzy", testpath);
         snprintf(lnk_path, FILENAME_MAX, "%s/foo/baz/xyzzy", testpath);
         CU_ASSERT(EXIT_SUCCESS == test_write_file_helper(tmp_path,
-                  "some data should go here"));
+	    "some data should go here"));
         CU_ASSERT(EXISTS_FILE == path_exists(tmp_path));
         CU_ASSERT(-1 != link(tmp_path, lnk_path));
         CU_ASSERT(EXISTS_FILE == path_exists(lnk_path));
         snprintf(tmp_path, FILENAME_MAX, "%s/foo/bar/thud", testpath);
         snprintf(lnk_path, FILENAME_MAX, "%s/foo/baz/fred", testpath);
         CU_ASSERT(EXIT_SUCCESS == test_write_file_helper(tmp_path,
-                    "we want something for the link"));
+	    "we want something for the link"));
         CU_ASSERT(EXISTS_FILE == path_exists(tmp_path));
         CU_ASSERT(-1 != symlink(tmp_path, lnk_path));
 

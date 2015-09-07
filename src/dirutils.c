@@ -32,8 +32,8 @@
 #include "dirlist.h"
 
 
-static int	_parent_exists(const char *);
-static int	_rmdirs(const char *);
+static int	  _parent_exists(const char *);
+static int	  _rmdirs(const char *);
 
 /*
  * Determines whether a directory exists.
@@ -41,8 +41,8 @@ static int	_rmdirs(const char *);
 EXISTS_STATUS
 path_exists(const char *path)
 {
-	struct stat	st;
-	int		rv;
+	struct stat	   st;
+	int		   rv;
 
 	rv = stat(path, &st);
 	if (rv == -1) {
@@ -62,7 +62,7 @@ path_exists(const char *path)
 		return EXISTS_DIR;
 	}
 	else if (st.st_mode & S_IFREG) {
-                return EXISTS_FILE;
+		return EXISTS_FILE;
 	}
 	else {
 		return EXISTS_OTHER;
@@ -77,9 +77,9 @@ int
 makedirs(const char *path)
 {
 	struct tq_dirlst	*lst;
-	struct dirlst		*elm;
-	size_t			path_sz;
-	char			*dnam_p, *curpath;
+	struct dirlst		     *elm;
+	size_t			      path_sz;
+	char			    *dnam_p, *curpath;
 
 	path_sz = strlen(path);
 	lst = dirlst_create(path, path_sz);
@@ -123,8 +123,8 @@ rmdirs(const char *path)
 int
 _parent_exists(const char *path)
 {
-	char	*name_buf;
-	char	*dnam_p;
+	char	    *name_buf;
+	char	    *dnam_p;
 
 	name_buf = strdup(path);
 
@@ -144,18 +144,25 @@ _parent_exists(const char *path)
 int
 _rmdirs(const char *path)
 {
-	char		 child[FILENAME_MAX + 1];
-	struct dirent	*dp;
-	DIR		*dirp;
-	int		 fail;
+	char			 child[FILENAME_MAX + 1];
+	struct dirent		  *dp;
+	DIR		      *dirp;
+	int		       fail;
 
-	if (NULL == (dirp = opendir(path)))
+	if (NULL == (dirp = opendir(path))) {
 		return EXIT_FAILURE;
+	}
+	
 	while (NULL != (dp = readdir(dirp))) {
-		if (0 == strncmp("..", dp->d_name, 3))
+		if (0 == strncmp("..", dp->d_name, 3)) {
 			continue;
-		if (0 == strncmp(".", dp->d_name, 2))
+		}
+		
+		if (0 == strncmp(".", dp->d_name, 2)) {
 			continue;
+		}
+
+		
 		snprintf(child, FILENAME_MAX, "%s/%s", path, dp->d_name);
 		if (DT_DIR == dp->d_type) {
 			fail = _rmdirs(child);
