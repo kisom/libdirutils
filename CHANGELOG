@@ -1,4 +1,8 @@
-1.1.0 (15-09-08):
+1.1.1 (2015-09-08):
+Updated:
+	+ Added 'subdir-objects' to automake initialisation.
+
+1.1.0 (2015-09-08):
 Added:
 	+ Add dirwalk feature.
 

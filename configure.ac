@@ -1,7 +1,7 @@
 AC_PREREQ([2.59])
-AC_INIT([dirutils], [1.1.0], [kyle@tyrfingr.is],
+AC_INIT([dirutils], [1.1.1], [kyle@tyrfingr.is],
         [libdirutils], [https://github.com/kisom/dirutils])
-AM_INIT_AUTOMAKE([1.11 foreign no-define])
+AM_INIT_AUTOMAKE([1.11 foreign no-define subdir-objects])
 AC_CONFIG_SRCDIR([src/dirutils.h])
 AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile docs/Makefile])
 AC_CHECK_HEADERS
